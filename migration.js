@@ -1,20 +1,8 @@
-const mysql = require("mysql2");
 const fs = require("fs");
 const path = require("path");
-const dotenv = require("dotenv");
 const { exit } = require("process");
 
-// Load environment variables from .env file
-dotenv.config();
-
-const pool = mysql.createPool({
-	connectionLimit: 1,
-	host: process.env.DB_HOST,
-	port: process.env.DB_PORT,
-	user: process.env.DB_USER,
-	password: process.env.DB_PASSWORD,
-	database: process.env.DB_NAME,
-});
+const pool = require("./config/mysql.connection.js");
 
 pool.getConnection(function (error, connection) {
 	if (error) throw error;

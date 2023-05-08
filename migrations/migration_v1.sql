@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS candidates (
     gender TINYINT NULL,
     specialisation VARCHAR(200) NULL,
     experience VARCHAR(30) NULL,
-    dob DATE NULL,
+    dob VARCHAR(100) NULL,
     address VARCHAR(500) NULL,
     resume VARCHAR(500) NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
