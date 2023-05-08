@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS candidates (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(40) NOT NULL,
+    last_name VARCHAR(40) NULL,
+    email VARCHAR(100) NULL,
+    phone_number VARCHAR(100) NULL,
+    gender TINYINT NULL,
+    specialisation VARCHAR(200) NULL,
+    experience VARCHAR(30) NULL,
+    dob DATE NULL,
+    address VARCHAR(500) NULL,
+    resume VARCHAR(500) NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
