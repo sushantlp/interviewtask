@@ -1,11 +1,19 @@
 const express = require("express");
 const path = require("path");
 const multer = require("multer");
+const dotenv = require("dotenv");
 const Authentication = require("../middleware/authentication");
 const { candidateSchema } = require("../validator/validation");
-const { keepCandidates, getCandidate } = require("../models/candidate.model");
+const {
+	keepCandidates,
+	getCandidate,
+	getCandidates,
+} = require("../models/candidate.model");
 
 const router = express.Router();
+
+// Load environment variables from .env file
+dotenv.config();
 
 // Dir Resolve
 const dir = path.resolve(path.join(__dirname, "../uploads"));
@@ -30,9 +38,22 @@ const upload = multer({
 	},
 });
 
+router.get("/token", async (req, res) => {
+	try {
+		const token = await Authentication.getJwtToken();
+		return res.status(200).send(token);
+	} catch (error) {
+		console.log("Error in Register API: ", error);
+		return res.status(500).send({
+			status: "Error",
+			message: error.message,
+		});
+	}
+});
+
 router.post(
 	"/candidates",
-	// Authentication.checkJwtToken,
+	Authentication.checkJwtToken,
 	upload.single("resume"),
 	async (req, res) => {
 		try {
@@ -54,7 +75,7 @@ router.post(
 
 router.get(
 	"/candidates/:id",
-	// Authentication.checkJwtToken,
+	Authentication.checkJwtToken,
 	async (req, res) => {
 		try {
 			const candidate = await getCandidate(req.params.id);
@@ -68,5 +89,60 @@ router.get(
 		}
 	},
 );
+
+router.get(
+	"/candidates/:search",
+	Authentication.checkJwtToken,
+	async (req, res) => {
+		try {
+			const candidate = await getCandidate(req.params.id);
+			return res.status(200).send(candidate);
+		} catch (error) {
+			console.log("Error in Register API: ", error);
+			return res.status(500).send({
+				status: "Error",
+				message: error.message,
+			});
+		}
+	},
+);
+
+router.get("/candidates", Authentication.checkJwtToken, async (req, res) => {
+	try {
+		const page = parseInt(req.query.page, 10) || 1; // default to page 1 if not specified
+		const limit = parseInt(req.query.limit, 10) || 10; // limit of 10 rows per page
+		const offset = (page - 1) * limit; // calculate the offset based on the current page
+
+		const candidate = await getCandidates(limit, offset);
+
+		const paylaod = {
+			current_page: page,
+			first_page_url: `${process.env.BASE_URL}/candidates?page=1&limit=${limit}`,
+			from: 1,
+			next_page_url:
+				candidate.length !== 0
+					? `${process.env.BASE_URL}/candidates?page=${page + 1}&limit=${limit}`
+					: null,
+			path: `${process.env.BASE_URL}/candidates`,
+			per_page: candidate.length,
+			prev_page_url:
+				page === 1
+					? null
+					: `${process.env.BASE_URL}/candidates?page=${
+							page - 1
+					  }&limit=${limit}`,
+			to: 25,
+			data: candidate,
+		};
+
+		return res.status(200).send(paylaod);
+	} catch (error) {
+		console.log("Error in Register API: ", error);
+		return res.status(500).send({
+			status: "Error",
+			message: error.message,
+		});
+	}
+});
 
 module.exports = router;

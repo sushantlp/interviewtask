@@ -14,7 +14,7 @@ module.exports.checkJwtToken = async (req, res, next) => {
 	}
 	const token = authHeader.split(" ")[1];
 	if (token) {
-		jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+		jwt.verify(token, process.env.JWT_SECRET, (err) => {
 			if (err) {
 				return res.status(401).send({
 					statuCode: 401,
@@ -22,7 +22,6 @@ module.exports.checkJwtToken = async (req, res, next) => {
 					data: { isTokenExpired: true },
 				});
 			} else {
-				req.user = user;
 				next();
 			}
 		});
@@ -37,17 +36,11 @@ module.exports.checkJwtToken = async (req, res, next) => {
 module.exports.getJwtToken = async (req) => {
 	const token = jwt.sign(
 		{
-			email: req.email,
-			userRole: req.userRole,
-			mobile: req.mobile,
-			userId: req._id,
+			email: "admin@recruitcrm",
 		},
-		process.env.JWT_TOKEN_SECRET_KEY,
+		process.env.JWT_SECRET,
 		{ expiresIn: process.env.JWT_EXPIRE_TIME },
 	);
-	const Obj = {
-		token: token,
-		userId: req._id,
-	};
+
 	return token;
 };
