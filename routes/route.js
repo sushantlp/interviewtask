@@ -3,7 +3,7 @@ const path = require("path");
 const multer = require("multer");
 const Authentication = require("../middleware/authentication");
 const { candidateSchema } = require("../validator/validation");
-const { keepCandidates } = require("../models/candidate.model");
+const { keepCandidates, getCandidate } = require("../models/candidate.model");
 
 const router = express.Router();
 
@@ -16,7 +16,10 @@ const storage = multer.diskStorage({
 	},
 	filename: function (req, file, cb) {
 		const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-		cb(null, `${file.fieldname}-${uniqueSuffix}`);
+		cb(
+			null,
+			`${file.fieldname}-${uniqueSuffix}.${file.mimetype.split("/")[1]}`,
+		);
 	},
 });
 
@@ -36,14 +39,29 @@ router.post(
 			await candidateSchema.validateAsync(req.body);
 			await keepCandidates(req);
 			return res.status(201).send({
-				statusCode: 201,
 				status: "Success",
 				message: "Candidate created successfully",
 			});
 		} catch (error) {
 			console.log("Error in Register API: ", error);
 			return res.status(500).send({
-				statusCode: 500,
+				status: "Error",
+				message: error.message,
+			});
+		}
+	},
+);
+
+router.get(
+	"/candidates/:id",
+	// Authentication.checkJwtToken,
+	async (req, res) => {
+		try {
+			const candidate = await getCandidate(req.params.id);
+			return res.status(200).send(candidate);
+		} catch (error) {
+			console.log("Error in Register API: ", error);
+			return res.status(500).send({
 				status: "Error",
 				message: error.message,
 			});

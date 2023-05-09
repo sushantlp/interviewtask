@@ -1,4 +1,9 @@
+const dotenv = require("dotenv");
 const pool = require("../config/mysql.connection.js");
+
+// Load environment variables from .env file
+dotenv.config();
+
 module.exports.keepCandidates = async (req) => {
 	try {
 		const promisePool = pool.promise();
@@ -20,6 +25,21 @@ module.exports.keepCandidates = async (req) => {
 			req.body.address || null,
 			req.file ? req.file.filename : null,
 		]);
+		return rows;
+	} catch (error) {
+		throw new Error(error);
+	}
+};
+
+module.exports.getCandidate = async (id) => {
+	try {
+		const promisePool = pool.promise();
+
+		// Query
+		const query = `SELECT first_name, last_name, email, phone_number, gender, specialisation, experience, dob, address, CONCAT('${process.env.BASE_URL}','/uploads/', resume) AS resume, created_at, updated_at FROM candidates WHERE id = ${id}`;
+
+		// query database using promises
+		const [rows, fields] = await promisePool.query(query);
 		return rows;
 	} catch (error) {
 		throw new Error(error);

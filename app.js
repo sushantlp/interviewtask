@@ -4,7 +4,6 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const dotenv = require("dotenv");
-// const mysql = require("mysql2");
 const fs = require("fs");
 
 const indexRouter = require("./routes/route");
@@ -30,6 +29,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/uploads", express.static("uploads"));
 
 app.use("/v1", indexRouter);
 
@@ -48,25 +48,6 @@ app.use(function (err, req, res, next) {
 	res.status(err.status || 500);
 	res.render("error");
 });
-
-// Create a connection to the MySQL database using environment variables
-// const connection = mysql.createPool({
-// 	host: process.env.DB_HOST,
-// 	port: process.env.DB_PORT,
-// 	user: process.env.DB_USER,
-// 	password: process.env.DB_PASSWORD,
-// 	database: process.env.DB_NAME,
-// 	connectionLimit: process.env.DB_CONNECTION_LIMIT,
-// });
-
-// Connect to the database
-// connection.connect((err) => {
-// 	if (err) {
-// 		console.error("Error connecting to database: ", err);
-// 		return;
-// 	}
-// 	console.log("Connected to database.");
-// });
 
 app.listen(process.env.PORT, () => {
 	console.log(`Server started on port ${process.env.PORT}`);
