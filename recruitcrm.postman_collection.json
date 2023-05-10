@@ -1,0 +1,238 @@
+{
+	"info": {
+		"_postman_id": "ea52be26-5609-41a7-97c6-68e0447282f0",
+		"name": "recruitcrm",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "701821"
+	},
+	"item": [
+		{
+			"name": "http://localhost:3000/v1/candidates",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHJlY3J1aXRjcm0iLCJpYXQiOjE2ODM2NjI0MzAsImV4cCI6MTY4NDI2NzIzMH0.yMU89ZbAVKEDGEvbwhy1XDHBD7HuM0-ZYzIvyOREx5o",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "first_name",
+							"value": "sushant",
+							"type": "text"
+						},
+						{
+							"key": "last_name",
+							"value": "Chauhan",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "soni@xelpmoc.in",
+							"type": "text"
+						},
+						{
+							"key": "phone_number",
+							"value": "7898130226",
+							"type": "text"
+						},
+						{
+							"key": "gender",
+							"value": "Male",
+							"type": "text"
+						},
+						{
+							"key": "specialisation",
+							"value": "Computer Science",
+							"type": "text"
+						},
+						{
+							"key": "experience",
+							"value": "7",
+							"type": "text"
+						},
+						{
+							"key": "dob",
+							"value": "1990-12-15",
+							"type": "text"
+						},
+						{
+							"key": "address",
+							"value": "Bangloare",
+							"type": "text"
+						},
+						{
+							"key": "resume",
+							"type": "file",
+							"src": "/home/neo/Downloads/4.pdf"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/v1/candidates",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"candidates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/v1/candidates/6",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHJlY3J1aXRjcm0iLCJpYXQiOjE2ODM2NjI0MzAsImV4cCI6MTY4NDI2NzIzMH0.yMU89ZbAVKEDGEvbwhy1XDHBD7HuM0-ZYzIvyOREx5o",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/v1/candidates/7",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"candidates",
+						"7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/v1/candidates?page=2&limit=5",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHJlY3J1aXRjcm0iLCJpYXQiOjE2ODM2NjI0MzAsImV4cCI6MTY4NDI2NzIzMH0.yMU89ZbAVKEDGEvbwhy1XDHBD7HuM0-ZYzIvyOREx5o",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "file",
+					"file": {}
+				},
+				"url": {
+					"raw": "http://localhost:3000/v1/candidates?page=1&limit=5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"candidates"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/v1/token",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/v1/token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/v1/candidates/search?page=1&limit=5&q=sus",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHJlY3J1aXRjcm0iLCJpYXQiOjE2ODM2NjI0MzAsImV4cCI6MTY4NDI2NzIzMH0.yMU89ZbAVKEDGEvbwhy1XDHBD7HuM0-ZYzIvyOREx5o",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/v1/candidates/search?page=1&limit=5&q=sus",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"candidates",
+						"search"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "5"
+						},
+						{
+							"key": "q",
+							"value": "sus"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

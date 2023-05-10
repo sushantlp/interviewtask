@@ -60,3 +60,18 @@ module.exports.getCandidates = async (limit, offset) => {
 		throw new Error(error);
 	}
 };
+
+module.exports.getCandidatesSearch = async (keyword, limit, offset) => {
+	try {
+		const promisePool = pool.promise();
+
+		// Query
+		const query = `SELECT first_name, last_name, email, phone_number, gender, specialisation, experience, dob, address, CONCAT('${process.env.BASE_URL}','/uploads/', resume) AS resume, created_at, updated_at FROM candidates WHERE MATCH(first_name) AGAINST('+${keyword}*' IN BOOLEAN MODE) LIMIT ${limit} OFFSET ${offset}`;
+
+		// query database using promises
+		const [rows, fields] = await promisePool.query(query);
+		return rows;
+	} catch (error) {
+		throw new Error(error);
+	}
+};

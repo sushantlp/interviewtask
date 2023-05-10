@@ -3,11 +3,13 @@ const path = require("path");
 const multer = require("multer");
 const dotenv = require("dotenv");
 const Authentication = require("../middleware/authentication");
+const { isSecure } = require("../middleware/secure");
 const { candidateSchema } = require("../validator/validation");
 const {
 	keepCandidates,
 	getCandidate,
 	getCandidates,
+	getCandidatesSearch,
 } = require("../models/candidate.model");
 
 const router = express.Router();
@@ -38,7 +40,7 @@ const upload = multer({
 	},
 });
 
-router.get("/token", async (req, res) => {
+router.get("/token", isSecure, async (req, res) => {
 	try {
 		const token = await Authentication.getJwtToken();
 		return res.status(200).send(token);
@@ -74,29 +76,38 @@ router.post(
 );
 
 router.get(
-	"/candidates/:id",
+	"/candidates/search",
 	Authentication.checkJwtToken,
 	async (req, res) => {
 		try {
-			const candidate = await getCandidate(req.params.id);
-			return res.status(200).send(candidate);
-		} catch (error) {
-			console.log("Error in Register API: ", error);
-			return res.status(500).send({
-				status: "Error",
-				message: error.message,
-			});
-		}
-	},
-);
+			const page = parseInt(req.query.page, 10) || 1; // default to page 1 if not specified
+			const limit = parseInt(req.query.limit, 10) || 10; // limit of 10 rows per page
+			const offset = (page - 1) * limit; // calculate the offset based on the current page
+			const q = req.query.q || "";
 
-router.get(
-	"/candidates/:search",
-	Authentication.checkJwtToken,
-	async (req, res) => {
-		try {
-			const candidate = await getCandidate(req.params.id);
-			return res.status(200).send(candidate);
+			const candidate = await getCandidatesSearch(q, limit, offset);
+
+			const paylaod = {
+				current_page: page,
+				first_page_url: `${process.env.BASE_URL}/candidates/search?q=${q}&page=1&limit=${limit}`,
+				next_page_url:
+					candidate.length !== 0
+						? `${process.env.BASE_URL}/candidates/search?q=${q}&page=${
+								page + 1
+						  }&limit=${limit}`
+						: null,
+				path: `${process.env.BASE_URL}/candidates/search`,
+				per_page: candidate.length,
+				prev_page_url:
+					page === 1
+						? null
+						: `${process.env.BASE_URL}/candidates?q=${q}&page=${
+								page - 1
+						  }&limit=${limit}`,
+				data: candidate,
+			};
+
+			return res.status(200).send(paylaod);
 		} catch (error) {
 			console.log("Error in Register API: ", error);
 			return res.status(500).send({
@@ -118,7 +129,6 @@ router.get("/candidates", Authentication.checkJwtToken, async (req, res) => {
 		const paylaod = {
 			current_page: page,
 			first_page_url: `${process.env.BASE_URL}/candidates?page=1&limit=${limit}`,
-			from: 1,
 			next_page_url:
 				candidate.length !== 0
 					? `${process.env.BASE_URL}/candidates?page=${page + 1}&limit=${limit}`
@@ -131,7 +141,6 @@ router.get("/candidates", Authentication.checkJwtToken, async (req, res) => {
 					: `${process.env.BASE_URL}/candidates?page=${
 							page - 1
 					  }&limit=${limit}`,
-			to: 25,
 			data: candidate,
 		};
 
@@ -144,5 +153,22 @@ router.get("/candidates", Authentication.checkJwtToken, async (req, res) => {
 		});
 	}
 });
+
+router.get(
+	"/candidates/:id",
+	Authentication.checkJwtToken,
+	async (req, res) => {
+		try {
+			const candidate = await getCandidate(req.params.id);
+			return res.status(200).send(candidate);
+		} catch (error) {
+			console.log("Error in Register API: ", error);
+			return res.status(500).send({
+				status: "Error",
+				message: error.message,
+			});
+		}
+	},
+);
 
 module.exports = router;
